@@ -1,5 +1,5 @@
-#Github Doughnut Widget
-
+Github Doughnut Widget
+===
 ##Description
 A Javascript widget for your portfolio, blog, etc. to display your (programming) multilingualism.
 Made with [Chart.js](https://github.com/nnnick/Chart.js)
