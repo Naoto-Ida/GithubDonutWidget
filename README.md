@@ -5,6 +5,10 @@ A Javascript widget for your portfolio, blog, etc. to display your (programming)
 
 Made with [Chart.js](https://github.com/nnnick/Chart.js)
 
+##Screenshot
+
+![alt tag](https://raw.githubusercontent.com/Naoto-Ida/GithubDonutWidget/master/screenshot.png)
+
 ##Usage
 1. Copy all files in primary directory.
 2. Copy the tags in `<body>` as is and place where intended.
