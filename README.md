@@ -7,7 +7,7 @@ Made with [Chart.js](https://github.com/nnnick/Chart.js)
 
 ##Screenshot
 
-![alt tag](https://raw.githubusercontent.com/Naoto-Ida/GithubDonutWidget/master/screenshot.png)
+![alt tag](https://raw.githubusercontent.com/Naoto-Ida/GithubDonutWidget/master/examples/screenshot.png)
 
 ##Usage
 1. Copy all files in primary directory.
