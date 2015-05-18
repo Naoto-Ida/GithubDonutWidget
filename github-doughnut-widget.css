@@ -1,0 +1,16 @@
+#github-doughnut-widget-holder {
+	position: relative;
+	width: 200px;
+	height: 200px;
+}
+#github-doughnut-widget {
+	width: 100%;
+	height: 100%;
+}
+#github-user-icon {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	z-index: -1;
+	margin: -50px 0 0 -50px;
+}
