@@ -1,19 +1,32 @@
 $(function() {
-	var username = "Naoto-Ida",
-		request_count = 50,
-		colors = {
-			"Python": "#4caf50",
-			"Undefined": "#9e9e9e"
-		}
+	//	Load settings
+	loadJSON("settings", function(response) {
+		var settings = JSON.parse(response),
+			username = settings[0]["username"],
+			request_count = settings[0]["request_count"]
 
-	if (username != "") {
-		var url = createRepoUrl(username, request_count)
-		try {
-			var data = getRepos(url);
-		} catch (err) {
+		if (username != "") {
+			var url = createRepoUrl(username, request_count)
+			try {
+				getLanguagesFromRepos(username, url);
+			} catch (err) {
+				console.log("Github API may be down or username may be wrong.");
+			}
+	    } else {
+			console.log("No username is set.");
 		}
-	} else {
-		console.log("No username is set.");
+	});
+
+	function loadJSON(filename, callback) {   
+    	var xobj = new XMLHttpRequest();
+		xobj.overrideMimeType("application/json");
+		xobj.open('GET', '../' + filename + '.json', true);
+		xobj.onreadystatechange = function () {
+			if (xobj.readyState == 4 && xobj.status == "200") {
+				callback(xobj.responseText);
+			}
+		};
+		xobj.send(null);  
 	}
 
 	function createRepoUrl(username, request_count)
@@ -21,7 +34,7 @@ $(function() {
 		return "https://api.github.com/users/" + username + "/repos?page=1&per_page=" + request_count + "&direction=desc";
 	}
 
-	function getRepos(url)
+	function getLanguagesFromRepos(username, url)
 	{
 		$.getJSON(url, function(json) {
 		}).done(function(json) {
@@ -42,7 +55,7 @@ $(function() {
 						languages[language] = 1;
 					}
             	}
-				displayWidget(languages, image);
+				displayWidget(username, languages, image);
 			}
 		})
 		.fail(function() {
@@ -50,31 +63,50 @@ $(function() {
 		});
 	}
 
-	function displayWidget(languages, image)
+	function displayWidget(username, languages, image)
 	{
-		console.log(image);
-		var data = [];
-		for (language in languages) {
-			if (colors[language]) {
-				color = colors[language];
-			} else {
-				color = colors["Undefined"];
-			}
-		
-
-			data.push({"value": languages[language], "label": language, "color": color, "highlight": "blue"});
-       	}     
-		$("#github-doughnut-widget-holder").append("<img id='github-user-icon' src='" + image + "'></img>");
-		resizeWidgetElements();
-		var ctx = document.getElementById("github-doughnut-widget").getContext("2d");
-		window.myDoughnut = new Chart(ctx).Doughnut(data, {responsive : true});
+		loadJSON("vendor/colors", function(response) {
+			var data = [],
+				colors = JSON.parse(response);
+			colors["Undefined"] = "gray";
+			for (language in languages) {
+				if (colors[language]) {
+					color = colors[language];
+				} else {
+					color = colors["Undefined"];
+				}
+				data.push({"value": languages[language], "label": language, "color": color, "highlight": "blue"});
+			}     
+			$("#github-doughnut-widget-holder").append("<a href='" + "https://github.com/" + username + "' id='github-user-icon' target='_blank'><img src='" + image + "'></img></a>");
+			resizeWidgetElements();
+			renderChart(data);
+		});
 	}
 
 
 	function resizeWidgetElements()
 	{
 		var widget_sizing = $("#github-doughnut-widget-holder").width(),
-			half_sizing	= widget_sizing / 2
-		$("#github-user-icon").css({"margin": "-" + half_sizing + "px, 0 0 , -" + half_sizing + "px" , "width": half_sizing + "px", "height": half_sizing + "px"});
+			quarter_sizing	= widget_sizing / 4,
+			eighth_sizing = quarter_sizing / 2
+		$("#github-user-icon").css({
+			"background": "#ccc" ,
+			"margin-top": - eighth_sizing + "px" ,
+			"margin-left": - eighth_sizing + "px" ,
+			"width": quarter_sizing + "px",
+			"height": quarter_sizing + "px"
+		});
+	}
+
+
+	function renderChart(data)
+	{
+		var ctx = document.getElementById("github-doughnut-widget").getContext("2d");
+		window.myDoughnut = new Chart(ctx).Doughnut(data, {
+			responsive: true,
+			animationSteps: 50,
+			percentageInnerCutout: 70,
+			segmentShowStroke : true,
+		});
 	}
 });
